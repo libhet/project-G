@@ -10,6 +10,82 @@
 // GLFW
 #include <GLFW/glfw3.h>
 
+#include <vector>
+#include <string>
+
+#include <geometry/math_vector.h>
+
+
+std::vector<Vector3f> vertices = {
+    Vector3f(0,1,0),
+    Vector3f(1,0,0),
+    Vector3f(-1,0,0),
+};
+
+GLuint VBO; // Vertex Buffer Object
+glGenBuffers(1, &VBO);
+glBindBuffer(GL_ARRAY_BUFFER, VBO);
+glBufferData(GL_ARRAY_BUFFER, sizeof(Vector3f)*vertices.size(), vertices.data(), GL_STATIC_DRAW);
+
+std::string vertexShader_source = 
+"#version 330 core\n"
+"layout (location = 0) in vec3 position;\n"
+"void main() {\n"
+"gl_Position = vec4(position.x, postition.y, position.z, 1.0);\n"
+"}\n";
+
+GLuint vertexShader;
+vertexShader = glCreateShader(GL_VERTEX_SHADER);
+
+glShaderSource(vertexShader, 1, &(vertexShader_source.c_str()), NULL);
+glCompileShader(vertexShader);
+
+GLint success;
+GLchar inflog[512];
+glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
+
+if(!success) {
+    glGetShaderInfoLog(vertexShader, 512, NULL, infolog);
+    std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" <<
+    inflog << std::endl;
+}
+
+std::string fragmentShader_source =
+"#version 330 core\n"
+"out vec4 color\n"
+"void main()\n"
+"{\n"
+"   color = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
+"}\n";
+
+GLuint fragmentShader;
+fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+glShaderSource(fragmentShader, 1, &(fragmentShader_source.c_str()),NULL);
+glCompileShader(fragmentShader);
+
+GLuint shaderProgram;
+shaderProgram = glCreateProgram();
+
+glAttachShader(shaderProgram, vertexShader);
+glAttachShader(shaderProgram, fragmentShader);
+glLinkProgram(shaderProgram);
+
+glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
+if(!success) {
+    glGetProgramInfoLog(shaderProgram, 512, NULL, infolog);
+    std::cout << inflog << std::endl;
+}
+
+glUseProgramm(shaderProgram);
+
+glDeleteShader(vertexShader);
+glDeleteShader(fragmentShader);
+
+glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (GLvoid*)0);
+glEnableVertexAttribArray(0);
+
+GLuint VAO; // Vertex Array Object
+glGenVertexArrays(1, &VAO);
 
 // Function prototypes
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
