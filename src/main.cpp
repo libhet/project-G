@@ -10,6 +10,134 @@
 // GLFW
 #include <GLFW/glfw3.h>
 
+#include <vector>
+#include <string>
+
+#include "geometry/math_vector.h"
+
+/// Vertices data ////////////////////////////
+
+std::vector<GLfloat> vertices = {
+    0,1,0,
+    1,0,0,
+    -1,0,0,
+};
+//////////////////////////////////////////////
+
+
+/// Shaders source ///////////////////////////
+std::string vertexShader_source = 
+"#version 330 core\n"
+"layout (location = 0) in vec3 position;\n"
+"void main() {\n"
+"gl_Position = vec4(position.x, position.y, position.z, 1.0);\n"
+"}\n";
+
+std::string fragmentShader_source =
+"#version 330 core\n"
+"out vec4 color;\n"
+"void main()\n"
+"{\n"
+"   color = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
+"}\n";
+
+/////////////////////////////////////////////
+
+/// Shaders /////////////////////////////////
+GLuint vertexShader;
+GLuint fragmentShader;
+GLuint shaderProgram;
+/////////////////////////////////////////////
+
+/// Buffers /////////////////////////////////
+GLuint VBO; // Vertex Buffer Object
+GLuint VAO; // Vertex Array Object
+/////////////////////////////////////////////
+
+/// For Errors //////////////////////////////
+GLint success;
+GLchar inflog[512];
+/////////////////////////////////////////////
+
+
+void CreateShaderProgramm() {
+    vertexShader = glCreateShader(GL_VERTEX_SHADER);
+    auto vertexShaderData = vertexShader_source.c_str();
+    glShaderSource(vertexShader, 1, &vertexShaderData, NULL);
+    glCompileShader(vertexShader);
+
+    glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
+
+    if(!success) {
+        glGetShaderInfoLog(vertexShader, 512, NULL, inflog);
+        std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" <<
+        inflog << std::endl;
+    }
+
+    fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+    auto fragmentShaderData = fragmentShader_source.c_str();
+    glShaderSource(fragmentShader, 1, &fragmentShaderData, NULL);
+    glCompileShader(fragmentShader);
+
+    if(!success) {
+        glGetShaderInfoLog(vertexShader, 512, NULL, inflog);
+        std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" <<
+        inflog << std::endl;
+    }
+
+    shaderProgram = glCreateProgram();
+
+    glAttachShader(shaderProgram, vertexShader);
+    glAttachShader(shaderProgram, fragmentShader);
+    glLinkProgram(shaderProgram);
+
+    glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
+    if(!success) {
+        glGetProgramInfoLog(shaderProgram, 512, NULL, inflog);
+        std::cout << inflog << std::endl;
+    }
+
+    glDeleteShader(vertexShader);
+    glDeleteShader(fragmentShader);
+
+}
+
+void Init() {
+    glGenVertexArrays(1, &VAO);
+    glGenBuffers(1, &VBO);
+    CreateShaderProgramm();
+}
+
+
+
+void BindBufferData() {
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)*vertices.size(), vertices.data(), GL_STATIC_DRAW);
+}
+
+
+void BindVertexAtributes() {
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
+    glEnableVertexAttribArray(0);
+}
+
+void InitVAO() {
+    glBindVertexArray(VAO);
+        BindBufferData();
+        BindVertexAtributes();
+    glBindVertexArray(0);
+}
+
+
+void MainDraw() {
+    glUseProgram(shaderProgram);
+    glBindVertexArray(VAO);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+    glBindVertexArray(0);
+}
+
+
+
 
 // Function prototypes
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
@@ -55,6 +183,14 @@ int main()
     glfwGetFramebufferSize(window, &width, &height);  
     glViewport(0, 0, width, height);
 
+
+    /////////////////////////////////////////
+    Init();
+    InitVAO();
+
+    /////////////////////////////////////////
+
+
     // Game loop
     while (!glfwWindowShouldClose(window))
     {
@@ -65,6 +201,8 @@ int main()
         // Clear the colorbuffer
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
+
+        MainDraw();
 
         // Swap the screen buffers
         glfwSwapBuffers(window);
