@@ -17,9 +17,13 @@
 
 /// Vertices data ////////////////////////////
 std::vector<GLfloat> vertices = {
-    0,0.5,0,
-    0,0.5,0,
-    -0.5,0,0,
+    0,      0.5,    0,  ///< First
+    0.5,    0.0,    0,
+    -0.5,   0,      0,
+
+    -0.5,      -0.5,    0,  ///< Second
+    0.0,    0.0,    0,
+    -1.0,   0,      0, 
 };
 
 std::vector<GLuint> indeces = {
@@ -142,8 +146,9 @@ void InitVAO() {
 void MainDraw() {
     glUseProgram(shaderProgram);
     glBindVertexArray(VAO);
-    // glDrawArrays(GL_TRIANGLES, 0, 3);
-    glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+    glDrawArrays(GL_TRIANGLES, 3, 3); ///< Draw second triangle.
+    //glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
 }
 
