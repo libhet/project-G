@@ -16,11 +16,14 @@
 #include "geometry/math_vector.h"
 
 /// Vertices data ////////////////////////////
-
 std::vector<GLfloat> vertices = {
-    0,1,0,
-    1,0,0,
-    -1,0,0,
+    0,0.5,0,
+    0,0.5,0,
+    -0.5,0,0,
+};
+
+std::vector<GLuint> indeces = {
+    1,2,3
 };
 //////////////////////////////////////////////
 
@@ -52,6 +55,7 @@ GLuint shaderProgram;
 /// Buffers /////////////////////////////////
 GLuint VBO; // Vertex Buffer Object
 GLuint VAO; // Vertex Array Object
+GLuint EBO; // Element Buffer Object
 /////////////////////////////////////////////
 
 /// For Errors //////////////////////////////
@@ -105,7 +109,10 @@ void CreateShaderProgramm() {
 void Init() {
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
+    glGenBuffers(1, &EBO);
     CreateShaderProgramm();
+
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 }
 
 
@@ -113,11 +120,14 @@ void Init() {
 void BindBufferData() {
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)*vertices.size(), vertices.data(), GL_STATIC_DRAW);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint)*indeces.size(), indeces.data(), GL_STATIC_DRAW);
 }
 
 
 void BindVertexAtributes() {
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_TRUE, 3 * sizeof(GLfloat), (GLvoid*)0);
     glEnableVertexAttribArray(0);
 }
 
@@ -132,7 +142,8 @@ void InitVAO() {
 void MainDraw() {
     glUseProgram(shaderProgram);
     glBindVertexArray(VAO);
-    glDrawArrays(GL_TRIANGLES, 0, 3);
+    // glDrawArrays(GL_TRIANGLES, 0, 3);
+    glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
 }
 
