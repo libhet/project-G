@@ -12,14 +12,15 @@
 
 #include <vector>
 #include <string>
+#include <cmath>
 
 #include "geometry/math_vector.h"
 
 /// Vertices data ////////////////////////////
 std::vector<GLfloat> vertices = {
-    0,      0.5,    0,  ///< First
-    0.5,    0.0,    0,
-    -0.5,   0,      0,
+    0,      0.5 + 0.3,    0,      1.0f,   0.0f,   0.0f,
+    -0.5,   -0.5 + 0.3,    0,      0.0f,   1.0f,   0.0f,
+    0.5,   -0.5 + 0.3,   0,      0.0f,   0.0f,   1.0f
 
     // -0.5,      -0.7,    0,  ///< Second
     // 0.0,    -0.2,    0,
@@ -27,9 +28,10 @@ std::vector<GLfloat> vertices = {
 };
 std::vector<GLfloat> vertices_2 = {
 
-    -0.5,      -0.7,    0,  ///< Second
-    0.0,    -0.2,    0,
-    -1.0,   -0.2,      0, 
+    -0.5,   -0.7,    0,     1.0f,   0.0f,   0.0f,     
+    -1.0,   -0.2,    0,     0.0f,   0.0f,   1.0f,
+     0.0,   -0.2,    0,     0.0f,   1.0f,   0.0f,
+ 
 };
 
 std::vector<GLuint> indeces = {
@@ -42,24 +44,30 @@ std::vector<GLuint> indeces = {
 std::string vertexShader_source = 
 "#version 330 core\n"
 "layout (location = 0) in vec3 position;\n"
+"layout (location = 1) in vec3 color;"
+"out vec3 ourColor\n;"
 "void main() {\n"
 "gl_Position = vec4(position.x, position.y, position.z, 1.0);\n"
+"ourColor = color;\n"
 "}\n";
 
 std::string fragmentShader_source =
 "#version 330 core\n"
 "out vec4 color;\n"
+"in vec3 ourColor;\n"
 "void main()\n"
 "{\n"
-"   color = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
+"   color = vec4(ourColor, 1.0f);\n"
 "}\n";
 
 std::string fragmentShader_2_source =
 "#version 330 core\n"
 "out vec4 color;\n"
+"in vec3 ourColor;\n"
+"uniform vec4 ourColor2;\n"
 "void main()\n"
 "{\n"
-"   color = vec4(1.0f, 1.0f, 0.1f, 1.0f);\n"
+"   color = vec4(ourColor.r * ourColor2.r, ourColor.g * ourColor2.g, ourColor.b * ourColor2.b, 1.0);\n"
 "}\n";
 
 /////////////////////////////////////////////
@@ -70,6 +78,8 @@ GLuint fragmentShader;
 GLuint fragmentShader_2;
 GLuint shaderProgram;
 GLuint shaderProgram_Yellow;
+
+GLint  vertexColorLocation; ///< uniform
 /////////////////////////////////////////////
 
 /// Buffers /////////////////////////////////
@@ -176,6 +186,11 @@ void Init() {
     CreateShaderProgramm();
     CreateShaderProgramm2();
 
+    vertexColorLocation = glGetUniformLocation(shaderProgram_Yellow, "ourColor2");
+    if(vertexColorLocation == -1 ) {
+        std::cout << "Can't find uniform" << std::endl;
+    }
+
     // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 }
 
@@ -196,8 +211,17 @@ void BindBufferData2() {
 }
 
 void BindVertexAtributes() {
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_TRUE, 3 * sizeof(GLfloat), (GLvoid*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid*)0);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
     glEnableVertexAttribArray(0);
+    glEnableVertexAttribArray(1);
+}
+
+void BindVertexAtributes2() {
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid*)0);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
+    glEnableVertexAttribArray(0);
+    glEnableVertexAttribArray(1);
 }
 
 void InitVAO() {
@@ -210,7 +234,7 @@ void InitVAO() {
 void InitVAO2() {
     glBindVertexArray(VAOs[1]);
         BindBufferData2();
-        BindVertexAtributes();
+        BindVertexAtributes2();
     glBindVertexArray(0);
 }
 
@@ -218,14 +242,25 @@ void InitVAO2() {
 void MainDraw() {
     glUseProgram(shaderProgram);
     glBindVertexArray(VAOs[0]);
-    glDrawArrays(GL_POINTS, 0, 3);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
     //glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
 
     glUseProgram(shaderProgram_Yellow);
+
     glBindVertexArray(VAOs[1]);
     glDrawArrays(GL_TRIANGLES, 0, 3);
     glBindVertexArray(0);
+}
+
+void MainUpdate() {
+    GLfloat time = glfwGetTime();
+    GLfloat redValue    = ((sin(time + (M_PI/3)))+ 1.0) / 2;
+    GLfloat greenValue  = ((sin(time + (2*M_PI/3))) + 1.0) / 2;
+    GLfloat blueValue   = ((sin(time + (3*M_PI/3))) + 1.0) / 2;
+
+    
+    glUniform4f(vertexColorLocation, redValue, greenValue, blueValue, 1.0f);
 }
 
 
@@ -295,7 +330,10 @@ int main()
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
+        
         MainDraw();
+
+        MainUpdate();
 
         // Swap the screen buffers
         glfwSwapBuffers(window);
