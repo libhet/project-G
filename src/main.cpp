@@ -54,12 +54,22 @@ std::string fragmentShader_source =
 "   color = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
 "}\n";
 
+std::string fragmentShader_2_source =
+"#version 330 core\n"
+"out vec4 color;\n"
+"void main()\n"
+"{\n"
+"   color = vec4(1.0f, 1.0f, 0.1f, 1.0f);\n"
+"}\n";
+
 /////////////////////////////////////////////
 
 /// Shaders /////////////////////////////////
 GLuint vertexShader;
 GLuint fragmentShader;
+GLuint fragmentShader_2;
 GLuint shaderProgram;
+GLuint shaderProgram_Yellow;
 /////////////////////////////////////////////
 
 /// Buffers /////////////////////////////////
@@ -116,12 +126,55 @@ void CreateShaderProgramm() {
 
 }
 
+void CreateShaderProgramm2() {
+    vertexShader = glCreateShader(GL_VERTEX_SHADER);
+    auto vertexShaderData = vertexShader_source.c_str();
+    glShaderSource(vertexShader, 1, &vertexShaderData, NULL);
+    glCompileShader(vertexShader);
+
+    glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
+
+    if(!success) {
+        glGetShaderInfoLog(vertexShader, 512, NULL, inflog);
+        std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" <<
+        inflog << std::endl;
+    }
+
+    fragmentShader_2 = glCreateShader(GL_FRAGMENT_SHADER);
+    auto fragmentShaderData = fragmentShader_2_source.c_str();
+    glShaderSource(fragmentShader_2, 1, &fragmentShaderData, NULL);
+    glCompileShader(fragmentShader_2);
+
+    if(!success) {
+        glGetShaderInfoLog(vertexShader, 512, NULL, inflog);
+        std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" <<
+        inflog << std::endl;
+    }
+
+    shaderProgram_Yellow = glCreateProgram();
+
+    glAttachShader(shaderProgram_Yellow, vertexShader);
+    glAttachShader(shaderProgram_Yellow, fragmentShader_2);
+    glLinkProgram(shaderProgram_Yellow);
+
+    glGetProgramiv(shaderProgram_Yellow, GL_LINK_STATUS, &success);
+    if(!success) {
+        glGetProgramInfoLog(shaderProgram_Yellow, 512, NULL, inflog);
+        std::cout << inflog << std::endl;
+    }
+
+    glDeleteShader(vertexShader);
+    glDeleteShader(fragmentShader_2);
+
+}
+
 void Init() {
     glEnable(GL_PROGRAM_POINT_SIZE);
     glGenVertexArrays(2, VAOs);
     glGenBuffers(2, VBOs);
     glGenBuffers(1, &EBO);
     CreateShaderProgramm();
+    CreateShaderProgramm2();
 
     // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 }
@@ -169,6 +222,7 @@ void MainDraw() {
     //glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
 
+    glUseProgram(shaderProgram_Yellow);
     glBindVertexArray(VAOs[1]);
     glDrawArrays(GL_TRIANGLES, 0, 3);
     glBindVertexArray(0);
