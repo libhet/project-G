@@ -21,9 +21,15 @@ std::vector<GLfloat> vertices = {
     0.5,    0.0,    0,
     -0.5,   0,      0,
 
-    -0.5,      -0.5,    0,  ///< Second
-    0.0,    0.0,    0,
-    -1.0,   0,      0, 
+    // -0.5,      -0.7,    0,  ///< Second
+    // 0.0,    -0.2,    0,
+    // -1.0,   -0.2,      0, 
+};
+std::vector<GLfloat> vertices_2 = {
+
+    -0.5,      -0.7,    0,  ///< Second
+    0.0,    -0.2,    0,
+    -1.0,   -0.2,      0, 
 };
 
 std::vector<GLuint> indeces = {
@@ -59,6 +65,8 @@ GLuint shaderProgram;
 /// Buffers /////////////////////////////////
 GLuint VBO; // Vertex Buffer Object
 GLuint VAO; // Vertex Array Object
+GLuint VBO2; // Vertex Buffer Object
+GLuint VAO2; // Vertex Array Object
 GLuint EBO; // Element Buffer Object
 /////////////////////////////////////////////
 
@@ -111,17 +119,20 @@ void CreateShaderProgramm() {
 }
 
 void Init() {
+    glEnable(GL_PROGRAM_POINT_SIZE);
     glGenVertexArrays(1, &VAO);
+    glGenVertexArrays(1, &VAO2);
     glGenBuffers(1, &VBO);
+    glGenBuffers(1, &VBO2);
     glGenBuffers(1, &EBO);
     CreateShaderProgramm();
 
-    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 }
 
 
 
-void BindBufferData() {
+void BindBufferData1() {
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)*vertices.size(), vertices.data(), GL_STATIC_DRAW);
 
@@ -129,6 +140,11 @@ void BindBufferData() {
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint)*indeces.size(), indeces.data(), GL_STATIC_DRAW);
 }
 
+void BindBufferData2() {
+    glBindBuffer(GL_ARRAY_BUFFER, VBO2);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)*vertices_2.size(), vertices_2.data(), GL_STATIC_DRAW);
+
+}
 
 void BindVertexAtributes() {
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_TRUE, 3 * sizeof(GLfloat), (GLvoid*)0);
@@ -137,7 +153,14 @@ void BindVertexAtributes() {
 
 void InitVAO() {
     glBindVertexArray(VAO);
-        BindBufferData();
+        BindBufferData1();
+        BindVertexAtributes();
+    glBindVertexArray(0);
+}
+
+void InitVAO2() {
+    glBindVertexArray(VAO2);
+        BindBufferData2();
         BindVertexAtributes();
     glBindVertexArray(0);
 }
@@ -146,9 +169,12 @@ void InitVAO() {
 void MainDraw() {
     glUseProgram(shaderProgram);
     glBindVertexArray(VAO);
-    glDrawArrays(GL_TRIANGLES, 0, 3);
-    glDrawArrays(GL_TRIANGLES, 3, 3); ///< Draw second triangle.
+    glDrawArrays(GL_POINTS, 0, 3);
     //glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
+    glBindVertexArray(0);
+
+    glBindVertexArray(VAO2);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
     glBindVertexArray(0);
 }
 
@@ -203,6 +229,7 @@ int main()
     /////////////////////////////////////////
     Init();
     InitVAO();
+    InitVAO2();
 
     /////////////////////////////////////////
 
