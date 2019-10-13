@@ -63,10 +63,8 @@ GLuint shaderProgram;
 /////////////////////////////////////////////
 
 /// Buffers /////////////////////////////////
-GLuint VBO; // Vertex Buffer Object
-GLuint VAO; // Vertex Array Object
-GLuint VBO2; // Vertex Buffer Object
-GLuint VAO2; // Vertex Array Object
+GLuint VBOs[2];  // Vertex Buffer Object
+GLuint VAOs[2];     // Vertex Array Object
 GLuint EBO; // Element Buffer Object
 /////////////////////////////////////////////
 
@@ -120,10 +118,8 @@ void CreateShaderProgramm() {
 
 void Init() {
     glEnable(GL_PROGRAM_POINT_SIZE);
-    glGenVertexArrays(1, &VAO);
-    glGenVertexArrays(1, &VAO2);
-    glGenBuffers(1, &VBO);
-    glGenBuffers(1, &VBO2);
+    glGenVertexArrays(2, VAOs);
+    glGenBuffers(2, VBOs);
     glGenBuffers(1, &EBO);
     CreateShaderProgramm();
 
@@ -133,7 +129,7 @@ void Init() {
 
 
 void BindBufferData1() {
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBindBuffer(GL_ARRAY_BUFFER, VBOs[0]);
     glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)*vertices.size(), vertices.data(), GL_STATIC_DRAW);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
@@ -141,7 +137,7 @@ void BindBufferData1() {
 }
 
 void BindBufferData2() {
-    glBindBuffer(GL_ARRAY_BUFFER, VBO2);
+    glBindBuffer(GL_ARRAY_BUFFER, VBOs[1]);
     glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)*vertices_2.size(), vertices_2.data(), GL_STATIC_DRAW);
 
 }
@@ -152,14 +148,14 @@ void BindVertexAtributes() {
 }
 
 void InitVAO() {
-    glBindVertexArray(VAO);
+    glBindVertexArray(VAOs[0]);
         BindBufferData1();
         BindVertexAtributes();
     glBindVertexArray(0);
 }
 
 void InitVAO2() {
-    glBindVertexArray(VAO2);
+    glBindVertexArray(VAOs[1]);
         BindBufferData2();
         BindVertexAtributes();
     glBindVertexArray(0);
@@ -168,12 +164,12 @@ void InitVAO2() {
 
 void MainDraw() {
     glUseProgram(shaderProgram);
-    glBindVertexArray(VAO);
+    glBindVertexArray(VAOs[0]);
     glDrawArrays(GL_POINTS, 0, 3);
     //glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
 
-    glBindVertexArray(VAO2);
+    glBindVertexArray(VAOs[1]);
     glDrawArrays(GL_TRIANGLES, 0, 3);
     glBindVertexArray(0);
 }
