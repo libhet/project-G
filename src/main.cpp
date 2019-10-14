@@ -15,37 +15,39 @@
 #include <cmath>
 
 #include "shader.h"
+#include "texture.h"
 
 #include "geometry/math_vector.h"
 
 /// Vertices data ////////////////////////////
 std::vector<GLfloat> vertices = {
-    0,      0.5 + 0.3,   0,      1.0f,   0.0f,   0.0f,
-    -0.5,  -0.5 + 0.3,   0,      0.0f,   1.0f,   0.0f,
-    0.5,   -0.5 + 0.3,   0,      0.0f,   0.0f,   1.0f
-
-    // -0.5,      -0.7,    0,  ///< Second
-    // 0.0,    -0.2,    0,
-    // -1.0,   -0.2,      0, 
+    -0.5,   0.5,   0,      1.0f,   0.0f,   0.0f,    0.0f,   1.0f,
+    0.5,   0.5,   0,       0.0f,   1.0f,   0.0f,    1.0f,   1.0f,
+    0.5,   -0.5,   0,      0.0f,   0.0f,   1.0f,    1.0f,   0.0f,
+    -0.5,   -0.5,   0,     0.0f,   0.0f,   1.0f,    0.0f,   0.0f,
 };
-std::vector<GLfloat> vertices_2 = {
 
+std::vector<GLfloat> vertices_2 = {
     -0.5,   -0.7,    0,     1.0f,   0.0f,   0.0f,     
     -1.0,   -0.2,    0,     0.0f,   0.0f,   1.0f,
      0.0,   -0.2,    0,     0.0f,   1.0f,   0.0f,
-
 };
 
 std::vector<GLuint> indeces = {
-    1,2,3
+    0,1,2,
+    2,3,0,
 };
 //////////////////////////////////////////////
 
 
 /// Shaders /////////////////////////////////
-Shader default_shader, hipno_shader, shift_shader;
+Shader  default_shader, hipno_shader, 
+        shift_shader,   texture_shader;
 GLint vertexColorLocation;
 GLint vertexShiftLocation;
+GLint textureSamplerLocation;
+
+Texture tex1;
 /////////////////////////////////////////////
 
 /// Buffers /////////////////////////////////
@@ -68,6 +70,9 @@ void CreateShaderProgramms() {
     vertexColorLocation = hipno_shader.GetUniformLocation("ourColor2");
 
     vertexShiftLocation = shift_shader.GetUniformLocation("Shift");
+
+    texture_shader  = Shader("../shaders/texture.vert", "../shaders/texture.frag");
+    textureSamplerLocation = texture_shader.GetUniformLocation("ourTexture");
 }
 
 
@@ -77,7 +82,7 @@ void Init() {
     glGenBuffers(1, &EBO);
     CreateShaderProgramms();
 
-
+    tex1 = Texture("../resources/yachik2.jpg");
     // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 }
 
@@ -98,10 +103,12 @@ void BindBufferData2() {
 }
 
 void BindVertexAtributes() {
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid*)0);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)0);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)(6 * sizeof(GLfloat)));
     glEnableVertexAttribArray(0);
     glEnableVertexAttribArray(1);
+    glEnableVertexAttribArray(2);
 }
 
 void BindVertexAtributes2() {
@@ -127,16 +134,18 @@ void InitVAO2() {
 
 
 void MainDraw() {
-    shift_shader.Use();
+    texture_shader.Use();
+    tex1.Bind();
     glBindVertexArray(VAOs[0]);
-    glDrawArrays(GL_TRIANGLES, 0, 3);
-    //glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
+    // glDrawArrays(GL_TRIANGLES, 0, 3);
+
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
 
-    hipno_shader.Use();
-    glBindVertexArray(VAOs[1]);
-    glDrawArrays(GL_TRIANGLES, 0, 3);
-    glBindVertexArray(0);
+    // hipno_shader.Use();
+    // glBindVertexArray(VAOs[1]);
+    // glDrawArrays(GL_TRIANGLES, 0, 3);
+    // glBindVertexArray(0);
 }
 
 void MainUpdate() {
