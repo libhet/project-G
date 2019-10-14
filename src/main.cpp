@@ -149,7 +149,7 @@ void MainUpdate() {
     hipno_shader.Use();
     glUniform4f(vertexColorLocation, redValue, greenValue, blueValue, 1.0f);
     shift_shader.Use();
-    glUniform2f(vertexShiftLocation,-0.3, 1);
+    glUniform2f(vertexShiftLocation, (sin(time))*0.3, 1);
 }
 
 
