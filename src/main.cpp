@@ -47,7 +47,7 @@ GLint vertexColorLocation;
 GLint vertexShiftLocation;
 GLint textureSamplerLocation;
 
-Texture tex1;
+Texture tex1, tex2;
 /////////////////////////////////////////////
 
 /// Buffers /////////////////////////////////
@@ -72,7 +72,7 @@ void CreateShaderProgramms() {
     vertexShiftLocation = shift_shader.GetUniformLocation("Shift");
 
     texture_shader  = Shader("../shaders/texture.vert", "../shaders/texture.frag");
-    textureSamplerLocation = texture_shader.GetUniformLocation("ourTexture");
+    // textureSamplerLocation = texture_shader.GetUniformLocation("ourTexture");
 }
 
 
@@ -83,6 +83,7 @@ void Init() {
     CreateShaderProgramms();
 
     tex1 = Texture("../resources/yachik2.jpg");
+    tex2 = Texture("../resources/pika.jpeg");
     // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 }
 
@@ -135,7 +136,15 @@ void InitVAO2() {
 
 void MainDraw() {
     texture_shader.Use();
+
+    glActiveTexture(GL_TEXTURE0);
     tex1.Bind();
+    glUniform1i(texture_shader.GetUniformLocation("ourTexture1"), 0);
+
+    glActiveTexture(GL_TEXTURE1);
+    tex2.Bind();
+    glUniform1i(texture_shader.GetUniformLocation("ourTexture1"), 1);
+
     glBindVertexArray(VAOs[0]);
     // glDrawArrays(GL_TRIANGLES, 0, 3);
 
