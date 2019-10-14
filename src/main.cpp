@@ -146,8 +146,10 @@ void MainUpdate() {
     GLfloat blueValue   = ((sin(time + (3*M_PI/3))) + 1.0) / 2;
 
     
+    hipno_shader.Use();
     glUniform4f(vertexColorLocation, redValue, greenValue, blueValue, 1.0f);
-    glUniform2f(vertexShiftLocation,-0.5, 1);
+    shift_shader.Use();
+    glUniform2f(vertexShiftLocation,-0.3, 1);
 }
 
 

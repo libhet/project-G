@@ -10,5 +10,5 @@ uniform vec2 Shift;
 void main() {
     float x = position.x + Shift.x;
     gl_Position = vec4(x, position.y, position.z, 1.0);
-    ourColor = vec3(position.x, position.y, position.z);
+    ourColor = color;
 };
