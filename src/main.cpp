@@ -14,12 +14,14 @@
 #include <string>
 #include <cmath>
 
+#include "shader.h"
+
 #include "geometry/math_vector.h"
 
 /// Vertices data ////////////////////////////
 std::vector<GLfloat> vertices = {
-    0,      0.5 + 0.3,    0,      1.0f,   0.0f,   0.0f,
-    -0.5,   -0.5 + 0.3,    0,      0.0f,   1.0f,   0.0f,
+    0,      0.5 + 0.3,   0,      1.0f,   0.0f,   0.0f,
+    -0.5,  -0.5 + 0.3,   0,      0.0f,   1.0f,   0.0f,
     0.5,   -0.5 + 0.3,   0,      0.0f,   0.0f,   1.0f
 
     // -0.5,      -0.7,    0,  ///< Second
@@ -31,7 +33,7 @@ std::vector<GLfloat> vertices_2 = {
     -0.5,   -0.7,    0,     1.0f,   0.0f,   0.0f,     
     -1.0,   -0.2,    0,     0.0f,   0.0f,   1.0f,
      0.0,   -0.2,    0,     0.0f,   1.0f,   0.0f,
- 
+
 };
 
 std::vector<GLuint> indeces = {
@@ -40,52 +42,15 @@ std::vector<GLuint> indeces = {
 //////////////////////////////////////////////
 
 
-/// Shaders source ///////////////////////////
-std::string vertexShader_source = 
-"#version 330 core\n"
-"layout (location = 0) in vec3 position;\n"
-"layout (location = 1) in vec3 color;"
-"out vec3 ourColor\n;"
-"void main() {\n"
-"gl_Position = vec4(position.x, position.y, position.z, 1.0);\n"
-"ourColor = color;\n"
-"}\n";
-
-std::string fragmentShader_source =
-"#version 330 core\n"
-"out vec4 color;\n"
-"in vec3 ourColor;\n"
-"void main()\n"
-"{\n"
-"   color = vec4(ourColor, 1.0f);\n"
-"}\n";
-
-std::string fragmentShader_2_source =
-"#version 330 core\n"
-"out vec4 color;\n"
-"in vec3 ourColor;\n"
-"uniform vec4 ourColor2;\n"
-"void main()\n"
-"{\n"
-"   color = vec4(ourColor.r * ourColor2.r, ourColor.g * ourColor2.g, ourColor.b * ourColor2.b, 1.0);\n"
-"}\n";
-
-/////////////////////////////////////////////
-
 /// Shaders /////////////////////////////////
-GLuint vertexShader;
-GLuint fragmentShader;
-GLuint fragmentShader_2;
-GLuint shaderProgram;
-GLuint shaderProgram_Yellow;
-
-GLint  vertexColorLocation; ///< uniform
+Shader default_shader, hipno_shader;
+GLint vertexColorLocation;
 /////////////////////////////////////////////
 
 /// Buffers /////////////////////////////////
-GLuint VBOs[2];  // Vertex Buffer Object
+GLuint VBOs[2];     // Vertex Buffer Object
 GLuint VAOs[2];     // Vertex Array Object
-GLuint EBO; // Element Buffer Object
+GLuint EBO;         // Element Buffer Object
 /////////////////////////////////////////////
 
 /// For Errors //////////////////////////////
@@ -94,102 +59,20 @@ GLchar inflog[512];
 /////////////////////////////////////////////
 
 
-void CreateShaderProgramm() {
-    vertexShader = glCreateShader(GL_VERTEX_SHADER);
-    auto vertexShaderData = vertexShader_source.c_str();
-    glShaderSource(vertexShader, 1, &vertexShaderData, NULL);
-    glCompileShader(vertexShader);
+void CreateShaderProgramms() {
+    default_shader  = Shader("../shaders/default.vert", "../shaders/incolor.frag");
+    hipno_shader    = Shader("../shaders/default.vert", "../shaders/uniform_color.frag");
 
-    glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-
-    if(!success) {
-        glGetShaderInfoLog(vertexShader, 512, NULL, inflog);
-        std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" <<
-        inflog << std::endl;
-    }
-
-    fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    auto fragmentShaderData = fragmentShader_source.c_str();
-    glShaderSource(fragmentShader, 1, &fragmentShaderData, NULL);
-    glCompileShader(fragmentShader);
-
-    if(!success) {
-        glGetShaderInfoLog(vertexShader, 512, NULL, inflog);
-        std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" <<
-        inflog << std::endl;
-    }
-
-    shaderProgram = glCreateProgram();
-
-    glAttachShader(shaderProgram, vertexShader);
-    glAttachShader(shaderProgram, fragmentShader);
-    glLinkProgram(shaderProgram);
-
-    glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
-    if(!success) {
-        glGetProgramInfoLog(shaderProgram, 512, NULL, inflog);
-        std::cout << inflog << std::endl;
-    }
-
-    glDeleteShader(vertexShader);
-    glDeleteShader(fragmentShader);
-
+    vertexColorLocation = hipno_shader.GetUniformLocation("ourColor2");
 }
 
-void CreateShaderProgramm2() {
-    vertexShader = glCreateShader(GL_VERTEX_SHADER);
-    auto vertexShaderData = vertexShader_source.c_str();
-    glShaderSource(vertexShader, 1, &vertexShaderData, NULL);
-    glCompileShader(vertexShader);
-
-    glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-
-    if(!success) {
-        glGetShaderInfoLog(vertexShader, 512, NULL, inflog);
-        std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" <<
-        inflog << std::endl;
-    }
-
-    fragmentShader_2 = glCreateShader(GL_FRAGMENT_SHADER);
-    auto fragmentShaderData = fragmentShader_2_source.c_str();
-    glShaderSource(fragmentShader_2, 1, &fragmentShaderData, NULL);
-    glCompileShader(fragmentShader_2);
-
-    if(!success) {
-        glGetShaderInfoLog(vertexShader, 512, NULL, inflog);
-        std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" <<
-        inflog << std::endl;
-    }
-
-    shaderProgram_Yellow = glCreateProgram();
-
-    glAttachShader(shaderProgram_Yellow, vertexShader);
-    glAttachShader(shaderProgram_Yellow, fragmentShader_2);
-    glLinkProgram(shaderProgram_Yellow);
-
-    glGetProgramiv(shaderProgram_Yellow, GL_LINK_STATUS, &success);
-    if(!success) {
-        glGetProgramInfoLog(shaderProgram_Yellow, 512, NULL, inflog);
-        std::cout << inflog << std::endl;
-    }
-
-    glDeleteShader(vertexShader);
-    glDeleteShader(fragmentShader_2);
-
-}
 
 void Init() {
-    glEnable(GL_PROGRAM_POINT_SIZE);
     glGenVertexArrays(2, VAOs);
     glGenBuffers(2, VBOs);
     glGenBuffers(1, &EBO);
-    CreateShaderProgramm();
-    CreateShaderProgramm2();
+    CreateShaderProgramms();
 
-    vertexColorLocation = glGetUniformLocation(shaderProgram_Yellow, "ourColor2");
-    if(vertexColorLocation == -1 ) {
-        std::cout << "Can't find uniform" << std::endl;
-    }
 
     // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 }
@@ -240,14 +123,13 @@ void InitVAO2() {
 
 
 void MainDraw() {
-    glUseProgram(shaderProgram);
+    default_shader.Use();
     glBindVertexArray(VAOs[0]);
     glDrawArrays(GL_TRIANGLES, 0, 3);
     //glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
 
-    glUseProgram(shaderProgram_Yellow);
-
+    hipno_shader.Use();
     glBindVertexArray(VAOs[1]);
     glDrawArrays(GL_TRIANGLES, 0, 3);
     glBindVertexArray(0);
