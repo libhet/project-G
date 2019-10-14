@@ -11,7 +11,7 @@ protected:
 
 
 template<typename Type>
-class Vector2T : public VectorNT<2, Type> {
+class Vector2T : public VectorNT<2, float> {
 private: // aliases
     using this_type = Vector2T<Type>;
 
@@ -43,7 +43,7 @@ public:
 };
 
 template<typename Type>
-class Vector3T : public VectorNT<3, Type> {
+class Vector3T : public VectorNT<3, float> {
 private: // aliases
     using this_type = Vector2T<Type>;
 
@@ -82,8 +82,7 @@ public:
 using Vector2f = Vector2T<float>;
 using Vector3f = Vector3T<float>;
 
-template<>
-Vector2f::Vector2T() { x(0.f); y(0.f); }
+
 
 class MatrixNNT {
 
