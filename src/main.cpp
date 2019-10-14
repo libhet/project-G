@@ -39,6 +39,18 @@ std::vector<GLuint> indeces = {
 };
 //////////////////////////////////////////////
 
+static float  mix_level = 1.0;
+
+void ChangeMixLevel(float value) {
+    float level = mix_level + value;
+    if(level > 1.0) {
+        mix_level = 1;
+    } else if(level < 0) {
+        mix_level = 0;
+    } else {
+        mix_level = level;
+    }
+}
 
 /// Shaders /////////////////////////////////
 Shader  default_shader, hipno_shader, 
@@ -46,6 +58,8 @@ Shader  default_shader, hipno_shader,
 GLint vertexColorLocation;
 GLint vertexShiftLocation;
 GLint textureSamplerLocation;
+
+GLint levelLocation;
 
 Texture tex1, tex2;
 /////////////////////////////////////////////
@@ -73,6 +87,7 @@ void CreateShaderProgramms() {
 
     texture_shader  = Shader("../shaders/texture.vert", "../shaders/texture.frag");
     // textureSamplerLocation = texture_shader.GetUniformLocation("ourTexture");
+    levelLocation   = texture_shader.GetUniformLocation("level");
 }
 
 
@@ -136,6 +151,8 @@ void InitVAO2() {
 
 void MainDraw() {
     texture_shader.Use();
+
+    glUniform1f(levelLocation, mix_level);
 
     glActiveTexture(GL_TEXTURE0);
     tex1.Bind();
@@ -257,5 +274,11 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     std::cout << key << std::endl;
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
         glfwSetWindowShouldClose(window, GL_TRUE);
+
+    if (key == GLFW_KEY_UP && action == GLFW_PRESS)
+        ChangeMixLevel(-0.05);
+
+    if (key == GLFW_KEY_DOWN && action == GLFW_PRESS)
+        ChangeMixLevel(0.05);
 }
 
