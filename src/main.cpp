@@ -43,8 +43,9 @@ std::vector<GLuint> indeces = {
 
 
 /// Shaders /////////////////////////////////
-Shader default_shader, hipno_shader;
+Shader default_shader, hipno_shader, shift_shader;
 GLint vertexColorLocation;
+GLint vertexShiftLocation;
 /////////////////////////////////////////////
 
 /// Buffers /////////////////////////////////
@@ -62,8 +63,11 @@ GLchar inflog[512];
 void CreateShaderProgramms() {
     default_shader  = Shader("../shaders/default.vert", "../shaders/incolor.frag");
     hipno_shader    = Shader("../shaders/default.vert", "../shaders/uniform_color.frag");
+    shift_shader    = Shader("../shaders/shift.vert", "../shaders/incolor.frag");
 
     vertexColorLocation = hipno_shader.GetUniformLocation("ourColor2");
+
+    vertexShiftLocation = shift_shader.GetUniformLocation("Shift");
 }
 
 
@@ -123,7 +127,7 @@ void InitVAO2() {
 
 
 void MainDraw() {
-    default_shader.Use();
+    shift_shader.Use();
     glBindVertexArray(VAOs[0]);
     glDrawArrays(GL_TRIANGLES, 0, 3);
     //glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
@@ -143,6 +147,7 @@ void MainUpdate() {
 
     
     glUniform4f(vertexColorLocation, redValue, greenValue, blueValue, 1.0f);
+    glUniform2f(vertexShiftLocation,-0.5, 1);
 }
 
 
