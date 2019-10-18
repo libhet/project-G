@@ -31,6 +31,34 @@ std::vector<GLfloat> vertices = {
     -0.5,   -0.5,   0,     0.0f,   0.0f,   1.0f,    0.0f,   0.0f,
 };
 
+std::vector<GLfloat> vert_cube = {
+    0.0f,0.0f, -1.0f,-1.0f, 1.0f ,
+    1.0f,1.0f,  1.0f, 1.0f, 1.0f ,
+    1.0f,0.0f,  1.0f,-1.0f, 1.0f ,
+    1.0f,0.0f, -1.0f,-1.0f,-1.0f ,
+    0.0f,1.0f, -1.0f, 1.0f, 1.0f ,
+    1.0f,1.0f, -1.0f, 1.0f,-1.0f ,
+    0.0f,1.0f,  1.0f, 1.0f,-1.0f ,
+    0.0f,0.0f,  1.0f,-1.0f,-1.0f ,
+    0.0f,1.0f, -1.0f, 1.0f,-1.0f ,
+    0.0f,0.0f, -1.0f, 1.0f, 1.0f ,
+    1.0f,0.0f,  1.0f, 1.0f, 1.0f ,
+    1.0f,1.0f,  1.0f, 1.0f,-1.0f ,
+    1.0f,1.0f, -1.0f,-1.0f,-1.0f ,
+    0.0f,1.0f,  1.0f,-1.0f,-1.0f ,
+    0.0f,0.0f,  1.0f,-1.0f, 1.0f ,
+    1.0f,0.0f, -1.0f,-1.0f, 1.0f ,
+    1.0f,0.0f,  1.0f,-1.0f,-1.0f ,
+    1.0f,1.0f,  1.0f, 1.0f,-1.0f ,
+    0.0f,1.0f,  1.0f, 1.0f, 1.0f ,
+    0.0f,0.0f,  1.0f,-1.0f, 1.0f ,
+    0.0f,0.0f, -1.0f,-1.0f,-1.0f ,
+    1.0f,0.0f, -1.0f,-1.0f, 1.0f ,
+    1.0f,1.0f, -1.0f, 1.0f, 1.0f ,
+    0.0f,1.0f, -1.0f, 1.0f,-1.0f ,
+};
+
+
 std::vector<GLfloat> vertices_2 = {
     -0.5,   -0.7,    0,     1.0f,   0.0f,   0.0f,     
     -1.0,   -0.2,    0,     0.0f,   0.0f,   1.0f,
@@ -75,8 +103,8 @@ Texture tex1, tex2;
 /////////////////////////////////////////////
 
 /// Buffers /////////////////////////////////
-GLuint VBOs[2];     // Vertex Buffer Object
-GLuint VAOs[2];     // Vertex Array Object
+GLuint VBOs[3];     // Vertex Buffer Object
+GLuint VAOs[3];     // Vertex Array Object
 GLuint EBO;         // Element Buffer Object
 /////////////////////////////////////////////
 
@@ -113,8 +141,8 @@ void CreateShaderProgramms() {
     
 
 void Init() {
-    glGenVertexArrays(2, VAOs);
-    glGenBuffers(2, VBOs);
+    glGenVertexArrays(3, VAOs);
+    glGenBuffers(3, VBOs);
     glGenBuffers(1, &EBO);
     CreateShaderProgramms();
 
@@ -143,6 +171,11 @@ void BindBufferData2() {
 
 }
 
+void BindBufferData3() {
+    glBindBuffer(GL_ARRAY_BUFFER, VBOs[2]);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)*vert_cube.size(), vert_cube.data(), GL_STATIC_DRAW);
+}
+
 void BindVertexAtributes() {
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)0);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
@@ -159,6 +192,13 @@ void BindVertexAtributes2() {
     glEnableVertexAttribArray(1);
 }
 
+void BindVertexAtributes3() {
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)(2 * sizeof(GLfloat)));
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)(0 * sizeof(GLfloat)));
+    glEnableVertexAttribArray(0);
+    glEnableVertexAttribArray(2);
+}
+
 void InitVAO() {
     glBindVertexArray(VAOs[0]);
         BindBufferData1();
@@ -170,6 +210,13 @@ void InitVAO2() {
     glBindVertexArray(VAOs[1]);
         BindBufferData2();
         BindVertexAtributes2();
+    glBindVertexArray(0);
+}
+
+void InitVAO3() {
+    glBindVertexArray(VAOs[2]);
+        BindBufferData3();
+        BindVertexAtributes3();
     glBindVertexArray(0);
 }
 
@@ -213,9 +260,9 @@ void MainDraw() {
     glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
 
-    glBindVertexArray(VAOs[0]);
-    // glDrawArrays(GL_TRIANGLES, 0, 3);
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+    glBindVertexArray(VAOs[2]);
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+    // glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
 
     // glm::mat4 transform2;
@@ -303,6 +350,7 @@ int main()
     Init();
     InitVAO();
     InitVAO2();
+    InitVAO3();
 
     /////////////////////////////////////////
 
