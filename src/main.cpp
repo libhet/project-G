@@ -164,6 +164,7 @@ void InitVAO2() {
 
 void MainDraw() {
     texture_shader.Use();
+    GLfloat time = glfwGetTime();
 
     /// Uniforms after Use()
 
@@ -176,13 +177,30 @@ void MainDraw() {
     glActiveTexture(GL_TEXTURE1);
     tex2.Bind();
     glUniform1i(texture_shader.GetUniformLocation("ourTexture1"), 1);
-
     
+    glm::mat4 transform;
+
+    // Siquence of transformation is matter
+    transform = glm::translate(transform, glm::vec3(0.5f, -0.5f, 0.0f));
+    transform = glm::rotate(transform, 45.0f * time, glm::vec3(0,0,1));
+    transform = glm::scale(transform, glm::vec3(0.5,0.5,0.5));
+    glUniformMatrix4fv(transformLocation, 1, GL_FALSE, glm::value_ptr(transform));
+
+
 
     glBindVertexArray(VAOs[0]);
     // glDrawArrays(GL_TRIANGLES, 0, 3);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+
+    glm::mat4 transform2;
+    transform2 = glm::translate(transform2, glm::vec3(-0.5f, 0.5f, 0.0f));
+    transform2 = glm::scale(transform2, glm::vec3(0.5 * sin(time)  + 0.5, 0.5 * sin(time) + 0.5, 0.5 * sin(time) + 0.5));
+    glUniformMatrix4fv(transformLocation, 1, GL_FALSE, glm::value_ptr(transform2));
 
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+
     glBindVertexArray(0);
 
     // hipno_shader.Use();
@@ -205,10 +223,7 @@ void MainUpdate() {
 
 
     texture_shader.Use();
-    glm::mat4 transform;
-    transform = glm::rotate(transform, 45.0f * time, glm::vec3(0,0,1));
-    transform = glm::scale(transform, glm::vec3(0.5,0.5,0.5));
-    glUniformMatrix4fv(transformLocation, 1, GL_FALSE, glm::value_ptr(transform));
+    
 }
 
 
