@@ -67,6 +67,10 @@ GLint levelLocation;
 
 GLint transformLocation;
 
+GLint modelLoc;
+GLint viewLoc;
+GLint projectionLoc;
+
 Texture tex1, tex2;
 /////////////////////////////////////////////
 
@@ -94,7 +98,15 @@ void CreateShaderProgramms() {
     texture_shader  = Shader("../shaders/texture.vert", "../shaders/texture.frag");
     // textureSamplerLocation = texture_shader.GetUniformLocation("ourTexture");
     levelLocation       = texture_shader.GetUniformLocation("level");
-    transformLocation   = texture_shader.GetUniformLocation("transform");
+    // transformLocation   = texture_shader.GetUniformLocation("transform");
+
+    modelLoc        = texture_shader.GetUniformLocation("model");
+    viewLoc         = texture_shader.GetUniformLocation("view");
+    projectionLoc   = texture_shader.GetUniformLocation("projection");
+
+
+
+    
 }
 
 
@@ -178,14 +190,27 @@ void MainDraw() {
     tex2.Bind();
     glUniform1i(texture_shader.GetUniformLocation("ourTexture1"), 1);
     
-    glm::mat4 transform;
+    // glm::mat4 transform;
 
     // Siquence of transformation is matter
-    transform = glm::translate(transform, glm::vec3(0.5f, -0.5f, 0.0f));
-    transform = glm::rotate(transform, 45.0f * time, glm::vec3(0,0,1));
-    transform = glm::scale(transform, glm::vec3(0.5,0.5,0.5));
-    glUniformMatrix4fv(transformLocation, 1, GL_FALSE, glm::value_ptr(transform));
+    // transform = glm::translate(transform, glm::vec3(0.5f, -0.5f, 0.0f));
+    // transform = glm::rotate(transform, 45.0f * time, glm::vec3(0,0,1));
+    // transform = glm::scale(transform, glm::vec3(0.5,0.5,0.5));
+    // glUniformMatrix4fv(transformLocation, 1, GL_FALSE, glm::value_ptr(transform));
 
+
+    glm::mat4 model;
+    model = glm::rotate(model, -55.0f, glm::vec3(1.0f,0.0f,0.0f));
+
+    glm::mat4 view;
+    view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
+    
+    glm::mat4 projection;
+    projection = glm::perspective(45.0f, 800.0f/600.0f, 0.1f, 100.0f);
+
+    glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+    glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+    glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
 
     glBindVertexArray(VAOs[0]);
@@ -193,12 +218,12 @@ void MainDraw() {
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
 
-    glm::mat4 transform2;
-    transform2 = glm::translate(transform2, glm::vec3(-0.5f, 0.5f, 0.0f));
-    transform2 = glm::scale(transform2, glm::vec3(0.5 * sin(time)  + 0.5, 0.5 * sin(time) + 0.5, 0.5 * sin(time) + 0.5));
-    glUniformMatrix4fv(transformLocation, 1, GL_FALSE, glm::value_ptr(transform2));
+    // glm::mat4 transform2;
+    // transform2 = glm::translate(transform2, glm::vec3(-0.5f, 0.5f, 0.0f));
+    // transform2 = glm::scale(transform2, glm::vec3(0.5 * sin(time)  + 0.5, 0.5 * sin(time) + 0.5, 0.5 * sin(time) + 0.5));
+    // glUniformMatrix4fv(transformLocation, 1, GL_FALSE, glm::value_ptr(transform2));
 
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+    // glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
 
     glBindVertexArray(0);
