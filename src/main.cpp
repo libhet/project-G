@@ -10,6 +10,10 @@
 // GLFW
 #include <GLFW/glfw3.h>
 
+#include "glm/glm.hpp"
+#include "glm/gtc/matrix_transform.hpp"
+#include "glm/gtc/type_ptr.hpp"
+
 #include <vector>
 #include <string>
 #include <cmath>
@@ -61,6 +65,8 @@ GLint textureSamplerLocation;
 
 GLint levelLocation;
 
+GLint transformLocation;
+
 Texture tex1, tex2;
 /////////////////////////////////////////////
 
@@ -87,10 +93,13 @@ void CreateShaderProgramms() {
 
     texture_shader  = Shader("../shaders/texture.vert", "../shaders/texture.frag");
     // textureSamplerLocation = texture_shader.GetUniformLocation("ourTexture");
-    levelLocation   = texture_shader.GetUniformLocation("level");
+    levelLocation       = texture_shader.GetUniformLocation("level");
+    transformLocation   = texture_shader.GetUniformLocation("transform");
 }
 
 
+    glm::mat4 transform;
+    
 void Init() {
     glGenVertexArrays(2, VAOs);
     glGenBuffers(2, VBOs);
@@ -100,6 +109,11 @@ void Init() {
     tex1 = Texture("../resources/yachik2.jpg");
     tex2 = Texture("../resources/pika.jpeg");
     // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+
+
+    transform = glm::rotate(transform, 45.0f, glm::vec3(0,0,1));
+    transform = glm::scale(transform, glm::vec3(0.5,0.5,0.5));
 }
 
 
@@ -152,6 +166,8 @@ void InitVAO2() {
 void MainDraw() {
     texture_shader.Use();
 
+    /// Uniforms after Use()
+
     glUniform1f(levelLocation, mix_level);
 
     glActiveTexture(GL_TEXTURE0);
@@ -161,6 +177,8 @@ void MainDraw() {
     glActiveTexture(GL_TEXTURE1);
     tex2.Bind();
     glUniform1i(texture_shader.GetUniformLocation("ourTexture1"), 1);
+
+    glUniformMatrix4fv(transformLocation, 1, GL_FALSE, glm::value_ptr(transform));
 
     glBindVertexArray(VAOs[0]);
     // glDrawArrays(GL_TRIANGLES, 0, 3);
