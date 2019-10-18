@@ -98,8 +98,8 @@ void CreateShaderProgramms() {
 }
 
 
-    glm::mat4 transform;
     
+
 void Init() {
     glGenVertexArrays(2, VAOs);
     glGenBuffers(2, VBOs);
@@ -112,8 +112,7 @@ void Init() {
 
 
 
-    transform = glm::rotate(transform, 45.0f, glm::vec3(0,0,1));
-    transform = glm::scale(transform, glm::vec3(0.5,0.5,0.5));
+
 }
 
 
@@ -178,7 +177,7 @@ void MainDraw() {
     tex2.Bind();
     glUniform1i(texture_shader.GetUniformLocation("ourTexture1"), 1);
 
-    glUniformMatrix4fv(transformLocation, 1, GL_FALSE, glm::value_ptr(transform));
+    
 
     glBindVertexArray(VAOs[0]);
     // glDrawArrays(GL_TRIANGLES, 0, 3);
@@ -203,6 +202,13 @@ void MainUpdate() {
     glUniform4f(vertexColorLocation, redValue, greenValue, blueValue, 1.0f);
     shift_shader.Use();
     glUniform2f(vertexShiftLocation, (sin(time))*0.3, 1);
+
+
+    texture_shader.Use();
+    glm::mat4 transform;
+    transform = glm::rotate(transform, 45.0f * time, glm::vec3(0,0,1));
+    transform = glm::scale(transform, glm::vec3(0.5,0.5,0.5));
+    glUniformMatrix4fv(transformLocation, 1, GL_FALSE, glm::value_ptr(transform));
 }
 
 
