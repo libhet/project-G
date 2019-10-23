@@ -267,9 +267,27 @@ void InitVAO3() {
 
 void MainDraw() {
         
-    
+    GLfloat radius = 10.0f;
+    GLfloat camX = sin(glfwGetTime()) * radius;
+    GLfloat camZ = cos(glfwGetTime()) * radius;
+
+
     glm::mat4 view  = glm::mat4(1.0f);
     glm::mat4 projection = glm::mat4(1.0f);
+
+
+    glm::vec3 cameraPos  = glm::vec3(camX, 0.0f, camZ);
+    glm::vec3 cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);   
+    glm::vec3 cameraDirection = glm::normalize(cameraPos - cameraTarget); /// actually its opposit to direction
+    glm::vec3 up            = glm::vec3(0.0f, 1.0f, 0.0f);
+    glm::vec3 cameraRight   = glm::normalize(glm::cross(up, cameraDirection)); // if vice versa arguments we get (-x)
+    glm::vec3 cameraUp      = glm::cross(cameraDirection, cameraRight);
+
+
+    view = glm::lookAt(cameraPos, cameraTarget, up);
+
+
+    
 
 
 
