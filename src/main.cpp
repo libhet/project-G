@@ -277,7 +277,7 @@ void MainDraw() {
 
 
     glm::vec3 cameraPos  = glm::vec3(camX, 0.0f, camZ);
-    glm::vec3 cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);   
+    glm::vec3 cameraTarget = glm::vec3(0.0f, 0.0f, 10.0f);   
     glm::vec3 cameraDirection = glm::normalize(cameraPos - cameraTarget); /// actually its opposit to direction
     glm::vec3 up            = glm::vec3(0.0f, 1.0f, 0.0f);
     glm::vec3 cameraRight   = glm::normalize(glm::cross(up, cameraDirection)); // if vice versa arguments we get (-x)
