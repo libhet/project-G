@@ -276,6 +276,14 @@ glm::vec3 cameraUp    = glm::vec3(0.0f, 1.0f,  0.0f);
 
 bool keys[1024];
 
+GLfloat deltaTime = 0.0f;
+GLfloat lastFrame = 0.0f;
+
+void UpdateGlobalTime() {
+    GLfloat currentFrame = glfwGetTime();
+    deltaTime = currentFrame - lastFrame;
+    lastFrame = currentFrame;
+}
 
 //////////////////////////////////////////////////////
 
@@ -379,6 +387,10 @@ void MainDraw() {
 }
 
 void MainUpdate() {
+    UpdateGlobalTime();
+
+    do_movement();
+
     // GLfloat time = glfwGetTime();
     // GLfloat redValue    = ((sin(time + (M_PI/3)))+ 1.0) / 2;
     // GLfloat greenValue  = ((sin(time + (2*M_PI/3))) + 1.0) / 2;
@@ -458,8 +470,7 @@ int main()
         // Check if any events have been activiated (key pressed, mouse moved etc.) and call corresponding response functions
         glfwPollEvents();
 
-        do_movement();
-
+        
         // Render
         // Clear the colorbuffer
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
@@ -509,7 +520,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 }
 
 void do_movement() {
-    GLfloat cameraSpeed = 0.01;
+    GLfloat cameraSpeed = 5.0f * deltaTime;
     if(keys[GLFW_KEY_W])
         cameraPos += cameraSpeed * cameraFront;
     if(keys[GLFW_KEY_S])
