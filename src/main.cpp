@@ -31,6 +31,9 @@
 #include <thread>
 #include <chrono>
 
+
+void do_movement();
+
 // using namespace std::chrono_literal;
 
 /// Vertices data ////////////////////////////
@@ -264,6 +267,17 @@ void InitVAO3() {
 }
 
 
+//////////////////////////////////////////////////////
+
+glm::vec3 cameraPos   = glm::vec3(0.0f, 0.0f,  3.0f);
+glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
+glm::vec3 cameraUp    = glm::vec3(0.0f, 1.0f,  0.0f);
+
+
+bool keys[1024];
+
+
+//////////////////////////////////////////////////////
 
 void MainDraw() {
         
@@ -276,23 +290,23 @@ void MainDraw() {
     glm::mat4 projection = glm::mat4(1.0f);
 
 
-    glm::vec3 cameraPos  = glm::vec3(camX, 0.0f, camZ);
-    glm::vec3 cameraTarget = glm::vec3(0.0f, 0.0f, -10.0f);   
-    glm::vec3 cameraDirection = glm::normalize(cameraPos - cameraTarget); /// actually its opposit to direction
+    // glm::vec3 cameraPos  = glm::vec3(0.0, 0.0f, 0.0);
+    glm::vec3 cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);   
+    // glm::vec3 cameraDirection = glm::normalize(cameraPos - cameraTarget); /// actually its opposit to direction
     glm::vec3 up            = glm::vec3(0.0f, 1.0f, 0.0f);
-    glm::vec3 cameraRight   = glm::normalize(glm::cross(up, cameraDirection)); // if vice versa arguments we get (-x)
-    glm::vec3 cameraUp      = glm::cross(cameraDirection, cameraRight);
+    // glm::vec3 cameraRight   = glm::normalize(glm::cross(up, cameraDirection)); // if vice versa arguments we get (-x)
+    // glm::vec3 cameraUp      = glm::cross(cameraDirection, cameraRight);
 
 
-    view = glm::lookAt(cameraPos, cameraTarget, up);
-
-
-    
-
+    view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
 
 
     
-    view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
+
+
+
+    
+    // view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
     
     projection = glm::perspective(glm::radians(45.0f), 800.0f/600.0f, 0.1f, 100.0f);
 
@@ -444,6 +458,8 @@ int main()
         // Check if any events have been activiated (key pressed, mouse moved etc.) and call corresponding response functions
         glfwPollEvents();
 
+        do_movement();
+
         // Render
         // Clear the colorbuffer
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
@@ -466,6 +482,8 @@ int main()
 // Is called whenever a key is pressed/released via GLFW
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode)
 {
+    GLfloat cameraSpeed = 0.05f;
+
     std::cout << key << std::endl;
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
         glfwSetWindowShouldClose(window, GL_TRUE);
@@ -475,5 +493,30 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 
     if (key == GLFW_KEY_DOWN && action == GLFW_PRESS)
         ChangeMixLevel(0.05);
+    // if (key == GLFW_KEY_W)
+    //     cameraPos += cameraSpeed * cameraFront;
+    // if (key == GLFW_KEY_S)
+    //     cameraPos -= cameraSpeed * cameraFront;
+    // if (key == GLFW_KEY_A)
+    //     cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+    // if (key == GLFW_KEY_D)
+    //     cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+
+    if(action == GLFW_PRESS)
+        keys[key] = true;
+    else if(action == GLFW_RELEASE)
+        keys[key] = false;
+}
+
+void do_movement() {
+    GLfloat cameraSpeed = 0.01;
+    if(keys[GLFW_KEY_W])
+        cameraPos += cameraSpeed * cameraFront;
+    if(keys[GLFW_KEY_S])
+        cameraPos -= cameraSpeed * cameraFront;
+    if(keys[GLFW_KEY_A])
+        cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+    if(keys[GLFW_KEY_D])
+        cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
 }
 
