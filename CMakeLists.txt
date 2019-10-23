@@ -17,7 +17,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/../bin)
 
 add_executable(${PROJECT_NAME} ${SOURCES})
 
-# set(LINK_LIBS "-L/usr/local/lib -lXi -lGLEW -lGLU -lSOIL -lGL -ldrm -lXdamage -lX11-xcb -lxcb-glx -lxcb-dri2 -lxcb-dri3 -lxcb-present -lxcb-sync -lxshmfence -lglfw3 -lrt -lm -ldl -lXrandr -lXinerama -lXxf86vm -lXcursor -lXext -lXrender -lXfixes -lX11 -lpthread -lxcb -lXau -lXdmcp")
+set(LINK_LIBS "-L/usr/local/lib -lXi -lGLEW -lGLU -lSOIL -lGL -ldrm -lXdamage -lX11-xcb -lxcb-glx -lxcb-dri2 -lxcb-dri3 -lxcb-present -lxcb-sync -lxshmfence -lglfw3 -lrt -lm -ldl -lXrandr -lXinerama -lXxf86vm -lXcursor -lXext -lXrender -lXfixes -lX11 -lpthread -lxcb -lXau -lXdmcp")
 
 set_target_properties(${PROJECT_NAME} PROPERTIES 
     CXX_STANDARD 14
@@ -25,7 +25,7 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
     COMPILE_OPTIONS -Wall -Wextra -Wpedantic
 )
 
-# target_link_libraries(${PROJECT_NAME} ${LINK_LIBS})
-target_link_libraries(${PROJECT_NAME} GLEW::GLEW ${OPENGL_gl_LIBRARY} ${GLFW_LIBRARIES} -lSOIL)
+target_link_libraries(${PROJECT_NAME} ${LINK_LIBS})
+# target_link_libraries(${PROJECT_NAME} GLEW::GLEW ${OPENGL_gl_LIBRARY} ${GLFW_LIBRARIES} -lSOIL)
 
 add_subdirectory(tests)
