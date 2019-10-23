@@ -290,7 +290,7 @@ GLfloat lastX = 400, lastY = 300;   /// Center of screen 800x600
 GLfloat yaw   = -90.0f;
 GLfloat pitch = 0.0f;
 
-
+GLfloat fov = 45;
 
 
 //////////////////////////////////////////////////////
@@ -324,7 +324,7 @@ void MainDraw() {
     
     // view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
     
-    projection = glm::perspective(glm::radians(45.0f), 800.0f/600.0f, 0.1f, 100.0f);
+    projection = glm::perspective(glm::radians(fov), 800.0f/600.0f, 0.1f, 100.0f);
 
 
 
@@ -422,6 +422,7 @@ void MainUpdate() {
 // Function prototypes
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 
 // Window dimensions
 const GLuint WIDTH = 800, HEIGHT = 600;
@@ -450,6 +451,7 @@ int main()
     // Set the required callback functions
     glfwSetKeyCallback(window, key_callback);
     glfwSetCursorPosCallback(window, mouse_callback);
+    glfwSetScrollCallback(window, scroll_callback);
 
 
     // Set this to true so GLEW knows to use a modern approach to retrieving function pointers and extensions
@@ -548,7 +550,7 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
     lastX = xpos;
     lastY = ypos;
 
-    GLfloat sensitivity = 0.05f;
+    GLfloat sensitivity = 0.024f;
     xoffset *= sensitivity;
     yoffset *= sensitivity;
 
@@ -566,6 +568,16 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
     front.y = sin(glm::radians(pitch));
     front.z = cos(glm::radians(pitch)) * sin(glm::radians(yaw));
     cameraFront = glm::normalize(front);
+}
+
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
+{
+    if(fov >= 1.0f && fov <= 45.0f)
+        fov -= yoffset;
+    if(fov <= 1.0f)
+        fov = 1.0f;
+    if(fov >= 45.0f)
+        fov = 45.0f;
 }
 
 void do_movement() {
