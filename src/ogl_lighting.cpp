@@ -90,7 +90,8 @@ Shader  default_shader,
         hipno_shader, 
         shift_shader,   
         texture_shader,
-        lightingShader;
+        lightingShader,
+        lightingShaderSrc;
         
 GLint vertexColorLocation;
 GLint vertexShiftLocation;
@@ -103,6 +104,10 @@ GLint transformLocation;
 GLint modelLoc;
 GLint viewLoc;
 GLint projectionLoc;
+
+GLint modelSrcLoc;
+GLint viewSrcLoc;
+GLint projectionSrcLoc;
 
 Texture tex1, tex2;
 /////////////////////////////////////////////
@@ -207,6 +212,11 @@ int main()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
+
+
+glfwWindowHint(GLFW_SAMPLES, 16);
+glEnable(GL_MULTISAMPLE);  
+
 
     // Create a GLFWwindow object that we can use for GLFW's functions
     GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "LearnOpenGL", nullptr, nullptr);    
@@ -363,6 +373,9 @@ void do_movement() {
 
 
 void Init() {
+
+
+
     glEnable(GL_DEPTH_TEST);
     glGenVertexArrays(1, &VAO);
     glGenVertexArrays(1, &lightVAO);
@@ -396,10 +409,15 @@ void CreateShaderProgramms() {
     // projectionLoc   = texture_shader.GetUniformLocation("projection");
 
     lightingShader     = Shader("../shaders/light.vert", "../shaders/light.frag");
+    lightingShaderSrc  = Shader("../shaders/light.vert", "../shaders/light_source.frag");
 
     modelLoc        = lightingShader.GetUniformLocation("model");
     viewLoc         = lightingShader.GetUniformLocation("view");
     projectionLoc   = lightingShader.GetUniformLocation("projection");
+
+    modelSrcLoc        = lightingShaderSrc.GetUniformLocation("model");
+    viewSrcLoc         = lightingShaderSrc.GetUniformLocation("view");
+    projectionSrcLoc   = lightingShaderSrc.GetUniformLocation("projection");
 
 }
 
@@ -430,6 +448,33 @@ void MainDraw() {
     glUniform3f(objectColorLoc, 1.0f, 0.5f, 0.31f);
     glUniform3f(lightColorLoc,  1.0f, 1.0f, 1.0f); 
 
+    glBindVertexArray(VAO);
+    {
+        glm::mat4 model = glm::mat4(1.0f);
+        // model = glm::translate(model, g);
+        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+    }
+    glBindVertexArray(0);
+
+
+
+/// Draw Source
+    lightingShaderSrc.Use();
+    glUniformMatrix4fv(viewSrcLoc, 1, GL_FALSE, glm::value_ptr(view));
+    glUniformMatrix4fv(projectionSrcLoc, 1, GL_FALSE, glm::value_ptr(projection));
+
+
+    glBindVertexArray(lightVAO);
+    {
+        glm::mat4 model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(1.2,1.0,2.0));
+        model = glm::scale(model, glm::vec3(0.2f));
+        glUniformMatrix4fv(modelSrcLoc, 1, GL_FALSE, glm::value_ptr(model));
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+    }
+    glBindVertexArray(0);
+
     // glUniform1f(levelLocation, mix_level);
 
     // glActiveTexture(GL_TEXTURE0);
@@ -453,23 +498,8 @@ void MainDraw() {
     // glBindVertexArray(0);
 
 
-    glBindVertexArray(VAO);
-    {
-        glm::mat4 model = glm::mat4(1.0f);
-        // model = glm::translate(model, g);
-        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-        glDrawArrays(GL_TRIANGLES, 0, 36);
-    }
-    glBindVertexArray(0);
+;
 
-    glBindVertexArray(lightVAO);
-    {
-        glm::mat4 model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(0.6,0.6,0.0));
-        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-        glDrawArrays(GL_TRIANGLES, 0, 36);
-    }
-    glBindVertexArray(0);
 
 }
 
