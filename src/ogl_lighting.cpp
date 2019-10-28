@@ -425,7 +425,7 @@ void CreateShaderProgramms() {
 
 void MainDraw() {
         
-    GLfloat radius  = 10.0f;
+    GLfloat radius  = 2.0f;
     GLfloat camX    = sin(glfwGetTime()) * radius;
     GLfloat camZ    = cos(glfwGetTime()) * radius;
 
@@ -438,7 +438,7 @@ void MainDraw() {
     view        = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
     projection  = glm::perspective(glm::radians(fov), 800.0f/600.0f, 0.1f, 100.0f);
 
-    auto lightPos = glm::vec3(1.2,1.0,2.0);
+    auto lightPos = glm::vec3(camX,camZ,camZ);
 
     lightingShader.Use();
     glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
