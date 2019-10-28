@@ -449,7 +449,9 @@ void MainDraw() {
 
     GLint objectColorLoc = glGetUniformLocation(lightingShader.Program, "objectColor");
     GLint lightColorLoc  = glGetUniformLocation(lightingShader.Program, "lightColor");
-    GLint lightPosLoc  = glGetUniformLocation(lightingShader.Program, "lightPos");
+    GLint lightPosLoc    = glGetUniformLocation(lightingShader.Program, "lightPos");
+    GLint viewPosLoc     = glGetUniformLocation(lightingShader.Program, "viewPos");
+    glUniform3f(viewPosLoc, cameraPos.x, cameraPos.y, cameraPos.z);
     glUniform3f(lightPosLoc, lightPos.x, lightPos.y, lightPos.z);
     glUniform3f(objectColorLoc, 1.0f, 0.5f, 0.31f);
     glUniform3f(lightColorLoc,  1.0f, 1.0f, 1.0f); 
