@@ -37,47 +37,47 @@ void do_movement();
  * Vertices of cube
 */
 GLfloat vert_cube[] = {
-    -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-     0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
-     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-    -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+    -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,   0,0,-1,
+     0.5f, -0.5f, -0.5f,  1.0f, 0.0f,   0,0,-1,
+     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,   0,0,-1,
+     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,   0,0,-1,
+    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,   0,0,-1,
+    -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,   0,0,-1,
 
-    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-     0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-     0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-    -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
-    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,   0,0,1,
+     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,   0,0,1,
+     0.5f,  0.5f,  0.5f,  1.0f, 1.0f,   0,0,1,
+     0.5f,  0.5f,  0.5f,  1.0f, 1.0f,   0,0,1,
+    -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,   0,0,1,
+    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,   0,0,1,
 
-    -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-    -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-    -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+    -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,   -1,0,0,
+    -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,   -1,0,0,
+    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,   -1,0,0,
+    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,   -1,0,0,
+    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,   -1,0,0,
+    -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,   -1,0,0,
 
-     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-     0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-     0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-     0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,   1,0,0,
+     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,   1,0,0,
+     0.5f, -0.5f, -0.5f,  0.0f, 1.0f,   1,0,0,
+     0.5f, -0.5f, -0.5f,  0.0f, 1.0f,   1,0,0,
+     0.5f, -0.5f,  0.5f,  0.0f, 0.0f,   1,0,0,
+     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,   1,0,0,
 
-    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-     0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
-     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,   0,-1,0,
+     0.5f, -0.5f, -0.5f,  1.0f, 1.0f,   0,-1,0,
+     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,   0,-1,0,
+     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,   0,-1,0,
+    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,   0,-1,0,
+    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,   0,-1,0,
 
-    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-    -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
-    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
+    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,   0,1,0,
+     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,   0,1,0,
+     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,   0,1,0,
+     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,   0,1,0,
+    -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,   0,1,0,
+    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,   0,1,0,
 };
 
 
@@ -139,8 +139,10 @@ void BindBufferData_Cube()
 
 void BindVertexAtributes() 
 {
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)(0 * sizeof(GLfloat)));
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)(0 * sizeof(GLfloat)));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)(5 * sizeof(GLfloat)));
     glEnableVertexAttribArray(0);
+    glEnableVertexAttribArray(1);
 }
 
 
@@ -267,7 +269,7 @@ glEnable(GL_MULTISAMPLE);
         
         // Render
         // Clear the colorbuffer
-        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+        // glClearColor(0.05f, 0.07f, 0.07f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         
@@ -436,6 +438,8 @@ void MainDraw() {
     view        = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
     projection  = glm::perspective(glm::radians(fov), 800.0f/600.0f, 0.1f, 100.0f);
 
+    auto lightPos = glm::vec3(1.2,1.0,2.0);
+
     lightingShader.Use();
     glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
     glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
@@ -445,6 +449,8 @@ void MainDraw() {
 
     GLint objectColorLoc = glGetUniformLocation(lightingShader.Program, "objectColor");
     GLint lightColorLoc  = glGetUniformLocation(lightingShader.Program, "lightColor");
+    GLint lightPosLoc  = glGetUniformLocation(lightingShader.Program, "lightPos");
+    glUniform3f(lightPosLoc, lightPos.x, lightPos.y, lightPos.z);
     glUniform3f(objectColorLoc, 1.0f, 0.5f, 0.31f);
     glUniform3f(lightColorLoc,  1.0f, 1.0f, 1.0f); 
 
@@ -468,7 +474,7 @@ void MainDraw() {
     glBindVertexArray(lightVAO);
     {
         glm::mat4 model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(1.2,1.0,2.0));
+        model = glm::translate(model, lightPos);
         model = glm::scale(model, glm::vec3(0.2f));
         glUniformMatrix4fv(modelSrcLoc, 1, GL_FALSE, glm::value_ptr(model));
         glDrawArrays(GL_TRIANGLES, 0, 36);

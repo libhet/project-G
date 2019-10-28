@@ -17,6 +17,7 @@ public:
     GLint GetUniformLocation(const GLchar * name);
 };
 
+
 GLint Shader::GetUniformLocation(const GLchar * name) {
     GLint uniformLocation = glGetUniformLocation(this->Program, name);
     if(uniformLocation == -1 ) {
